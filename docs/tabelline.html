@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sfida Tabelline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Nuova striscia header */
+        .header-strip {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            width: 100%;
+            padding: 1vh 3vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        
+        .title-section {
+            color: white;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .main-title {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: bold;
+            margin-bottom: 0.2vh;
+        }
+        
+        .subtitle {
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            opacity: 0.8;
+            font-style: italic;
+        }
+        
+        .control-button {
+            width: clamp(35px, 6vw, 45px);
+            height: clamp(35px, 6vw, 45px);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .home-button {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .sound-button {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Stats section sotto l'header */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.9);
+            margin: 1vh 3vw 0 3vw;
+            padding: 1vh 2vw;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 6vw;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .stat-icon {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin-bottom: 0.3vh;
+        }
+        
+        .stat-value {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            margin-top: 0.2vh;
+            opacity: 0.7;
+        }
+        
+        /* Contenuto principale */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1vh 3vw;
+            overflow: hidden;
+        }
+        
+        .game-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2vh 4vw;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 50vw;
+            max-width: 90vw;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .question {
+            font-size: clamp(1.5rem, 6vw, 3.5rem);
+            color: #333;
+            margin-bottom: 2vh;
+            font-weight: bold;
+        }
+        
+        .input-container {
+            margin: 2vh 0;
+        }
+        
+        .answer-input {
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            padding: 0.8vh 2vw;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            text-align: center;
+            width: clamp(150px, 30vw, 300px);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .answer-input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(118, 75, 162, 0.3);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1.5vw;
+            justify-content: center;
+            margin-top: 2vh;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            padding: 1vh 2.5vw;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            white-space: nowrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .btn-home {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feedback {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin-top: 1.5vh;
+            min-height: 2rem;
+            font-weight: bold;
+        }
+        
+        .correct {
+            color: #27ae60;
+        }
+        
+        .incorrect {
+            color: #e74c3c;
+        }
+        
+        .level-selector {
+            margin-bottom: 1.5vh;
+        }
+        
+        .level-btn {
+            margin: 0 0.5vw;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            padding: 0.8vh 2vw;
+        }
+        
+        .level-btn.easy {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+        
+        .level-btn.medium {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        .level-btn.hard {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .level-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 1vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
+            height: 0.8vh;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-height: 700px) {
+            .game-card {
+                padding: 1.5vh 3vw;
+                max-height: 60vh;
+            }
+            .question {
+                margin-bottom: 1.5vh;
+                font-size: clamp(1.3rem, 5vw, 2.5rem);
+            }
+            .buttons {
+                margin-top: 1.5vh;
+            }
+            .stats-section {
+                padding: 0.8vh 1.5vw;
+                gap: 4vw;
+            }
+            .feedback {
+                min-height: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-strip {
+                padding: 0.8vh 2vw;
+            }
+            .stats-section {
+                margin: 0.8vh 2vw 0 2vw;
+                gap: 4vw;
+                padding: 0.8vh 1.5vw;
+            }
+            .control-button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            .answer-input {
+                width: clamp(120px, 50vw, 250px);
+            }
+            .buttons {
+                gap: 1vw;
+            }
+            .btn {
+                min-width: 80px;
+                padding: 0.8vh 1.5vw;
+                font-size: clamp(0.8rem, 1.8vw, 1rem);
+            }
+            .level-btn {
+                margin: 0.2vh 0.3vw;
+                padding: 0.6vh 1.5vw;
+                font-size: clamp(0.7rem, 1.6vw, 0.9rem);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-card {
+                padding: 1vh 2vw;
+                min-width: 90vw;
+            }
+            .main-content {
+                padding: 0.5vh 1vw;
+            }
+            .stats-section {
+                gap: 3vw;
+                margin: 0.5vh 1vw 0 1vw;
+            }
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1vh;
+            }
+            .btn {
+                width: 80%;
+                min-width: 150px;
+            }
+            .level-selector {
+                margin-bottom: 1vh;
+            }
+            .level-btn {
+                display: block;
+                margin: 0.3vh auto;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Nuova striscia header -->
+        <div class="header-strip">
+            <button class="control-button home-button" onclick="goHome()" title="Torna alla Home">
+                🏠
+            </button>
+            
+            <div class="title-section">
+                <div class="main-title">Sfida Tabelline</div>
+                <div class="subtitle">by Maestro Alberto</div>
+            </div>
+            
+            <button class="control-button sound-button" onclick="toggleSound()" id="soundToggle" title="Audio">
+                🔊
+            </button>
+        </div>
+        
+        <!-- Stats section -->
+        <div class="stats-section">
+            <div class="stat-item">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">punti</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="timer">60</div>
+                <div class="stat-label">secondi</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value"><span id="questionProgress">0</span>/15</div>
+                <div class="stat-label">domande</div>
+            </div>
+        </div>
+        
+        <!-- Contenuto principale -->
+        <div class="main-content">
+            <div class="game-card">
+                <div class="level-selector">
+                    <button class="btn level-btn easy" onclick="setLevel(1)">Facile (1-3)</button>
+                    <button class="btn level-btn medium" onclick="setLevel(2)">Medio (4-6)</button>
+                    <button class="btn level-btn hard" onclick="setLevel(3)">Difficile (7-9)</button>
+                </div>
+                
+                <div class="question" id="question">5 × 7 = ?</div>
+                
+                <div class="input-container">
+                    <input type="number" class="answer-input" id="answerInput" placeholder="?" autocomplete="off">
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn btn-primary" onclick="checkAnswer()">✓ Verifica</button>
+                    <button class="btn btn-home" onclick="backToLevelSelection()">🏠 Torna alla Selezione</button>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Data di scadenza del gioco
+        const EXPIRATION_DATE = new Date('2026-01-01');
+        
+        // Sistema audio SEMPLIFICATO
+        let audioContext;
+        let soundEnabled = true;
+        
+        // Funzione per tornare alla home
+        function goHome() {
+            playClickSound();
+            // Assumendo che l'index sia nella stessa directory
+            window.location.href = 'index.html';
+        }
+        
+        // Funzione per tornare alla selezione livelli
+        function backToLevelSelection() {
+            playClickSound();
+            
+            // Ferma il gioco corrente
+            gameActive = false;
+            gameStarted = false;
+            stopTimer();
+            
+            // Reset valori
+            score = 0;
+            questionsAnswered = 0;
+            timeLeft = 60;
+            
+            // Reset interfaccia
+            updateDisplay();
+            updateStats();
+            updateProgress();
+            
+            // Rimuovi selezione livello attivo
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Reset input e feedback
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').disabled = true;
+            document.getElementById('feedback').textContent = '👆 Scegli un livello per iniziare!';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('question').textContent = 'Seleziona un livello';
+        }
+        
+        // Inizializza il contesto audio
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+        
+        // Crea un tono (versione semplificata)
+        function playTone(frequency, duration, volume = 0.1, type = 'sine') {
+            if (!soundEnabled || !audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        // Suoni specifici del gioco
+        function playCorrectSound() {
+            if (!soundEnabled) return;
+            setTimeout(() => playTone(523.25, 0.3, 0.08), 0);
+            setTimeout(() => playTone(659.25, 0.3, 0.06), 50);
+            setTimeout(() => playTone(783.99, 0.4, 0.05), 100);
+        }
+        
+        function playIncorrectSound() {
+            if (!soundEnabled) return;
+            playTone(220, 0.4, 0.06, 'triangle');
+        }
+        
+        function playClickSound() {
+            if (!soundEnabled) return;
+            playTone(800, 0.1, 0.03, 'triangle');
+        }
+        
+        function playGameEndSound() {
+            if (!soundEnabled) return;
+            const notes = [523.25, 587.33, 659.25, 698.46, 783.99];
+            notes.forEach((freq, i) => {
+                setTimeout(() => playTone(freq, 0.4, 0.07), i * 150);
+            });
+        }
+        
+        function playWarningSound() {
+            if (!soundEnabled) return;
+            playTone(880, 0.1, 0.08, 'triangle');
+        }
+        
+        function playLevelSelectSound() {
+            if (!soundEnabled) return;
+            playTone(523.25, 0.15, 0.1, 'sine');
+        }
+        
+        // Funzione per attivare/disattivare i suoni
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const toggle = document.getElementById('soundToggle');
+            toggle.textContent = soundEnabled ? '🔊' : '🔇';
+            toggle.title = soundEnabled ? 'Disattiva Suoni' : 'Attiva Suoni';
+            
+            if (soundEnabled) {
+                initAudio();
+                playClickSound();
+            }
+        }
+        
+        let currentLevel = 1;
+        let score = 0;
+        let timeLeft = 60;
+        let currentQuestion = {};
+        let gameActive = false;
+        let gameStarted = false;
+        let questionsAnswered = 0;
+        const totalQuestions = 15;
+        let gameTimer = null;
+        
+        // SISTEMA ANTI-RIPETIZIONE MIGLIORATO
+        let levelQuestions = new Map(); // Mappa per ogni livello
+        
+        // Inizializza le domande per ogni livello
+        function initializeLevelQuestions() {
+            for (let level = 1; level <= 3; level++) {
+                const questions = [];
+                const range = getNumberRange(level);
+                
+                // Genera TUTTE le possibili domande per questo livello
+                for (let base of range.baseNumbers) {
+                    for (let multiplier of range.multipliers) {
+                        questions.push({
+                            num1: base,
+                            num2: multiplier,
+                            answer: base * multiplier,
+                            key: `${Math.min(base, multiplier)}x${Math.max(base, multiplier)}`
+                        });
+                    }
+                }
+                
+                // Rimuovi duplicati basati sulla chiave
+                const uniqueQuestions = [];
+                const seenKeys = new Set();
+                
+                for (let q of questions) {
+                    if (!seenKeys.has(q.key)) {
+                        seenKeys.add(q.key);
+                        uniqueQuestions.push(q);
+                    }
+                }
+                
+                // Mischia le domande
+                shuffleArray(uniqueQuestions);
+                
+                levelQuestions.set(level, {
+                    questions: uniqueQuestions,
+                    currentIndex: 0,
+                    totalQuestions: uniqueQuestions.length
+                });
+                
+                console.log(`Livello ${level}: ${uniqueQuestions.length} domande uniche preparate`);
+            }
+        }
+        
+        // Funzione per mescolare un array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        // Funzione per controllare se il gioco è scaduto
+        function isGameExpired() {
+            const currentDate = new Date();
+            return currentDate >= EXPIRATION_DATE;
+        }
+        
+        // Funzione per disabilitare il gioco quando è scaduto
+        function disableExpiredGame() {
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+            });
+            
+            document.getElementById('answerInput').disabled = true;
+            document.querySelector('.btn-primary').disabled = true;
+            document.querySelector('.btn-primary').style.opacity = '0.5';
+            document.querySelector('.btn-primary').style.cursor = 'not-allowed';
+            
+            document.getElementById('question').textContent = '⏰ GIOCO SCADUTO';
+            document.getElementById('question').style.color = '#e74c3c';
+            document.getElementById('feedback').textContent = '🚫 Questo gioco non è più disponibile dal 1° Gennaio 2026';
+            document.getElementById('feedback').className = 'feedback incorrect';
+            document.getElementById('feedback').style.fontSize = '1.5rem';
+        }
+        
+        function setLevel(level) {
+            if (isGameExpired()) return;
+            
+            // Se c'è un gioco in corso, chiedi conferma prima di cambiare livello
+            if (gameActive && gameStarted && questionsAnswered > 0) {
+                const levelNames = ['Facile (1-3)', 'Medio (4-6)', 'Difficile (7-9)'];
+                const confirm = window.confirm(`Vuoi davvero cambiare al livello ${levelNames[level-1]}?\n\nIl punteggio attuale (${score} punti) andrà perso.`);
+                if (!confirm) {
+                    return;
+                }
+            }
+            
+            playLevelSelectSound();
+            
+            if (gameActive) {
+                stopTimer();
+            }
+            
+            currentLevel = level;
+            
+            // Reset dell'indice per questo livello
+            const levelData = levelQuestions.get(level);
+            if (levelData) {
+                levelData.currentIndex = 0;
+                shuffleArray(levelData.questions); // Rimischia quando ricomincia
+            }
+            
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.level-btn');
+            buttons[level - 1].classList.add('active');
+            
+            gameStarted = true;
+            gameActive = true;
+            document.getElementById('answerInput').disabled = false;
+            questionsAnswered = 0;
+            score = 0;
+            timeLeft = 60;
+            
+            const levelNames = ['Facile (1-3)', 'Medio (4-6)', 'Difficile (7-9)'];
+            document.getElementById('feedback').textContent = `🎯 Livello ${levelNames[level-1]} selezionato!`;
+            document.getElementById('feedback').className = 'feedback';
+            
+            updateDisplay();
+            updateStats();
+            startTimer();
+            newQuestion();
+        }
+        
+        function updateStats() {
+            document.getElementById('questionProgress').textContent = questionsAnswered;
+        }
+        
+        function getNumberRange(level) {
+            switch(level) {
+                case 1: return { baseNumbers: [1, 2, 3], multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
+                case 2: return { baseNumbers: [4, 5, 6], multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
+                case 3: return { baseNumbers: [7, 8, 9], multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
+                default: return { baseNumbers: [1, 2, 3], multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9] };
+            }
+        }
+        
+        // NUOVA FUNZIONE PER GENERARE DOMANDE SENZA RIPETIZIONI
+        function generateRandomQuestion() {
+            const levelData = levelQuestions.get(currentLevel);
+            if (!levelData || levelData.questions.length === 0) {
+                console.error(`Nessuna domanda disponibile per il livello ${currentLevel}`);
+                return { num1: 2, num2: 3, answer: 6 }; // Fallback
+            }
+            
+            // Se abbiamo completato tutte le domande, ricomincia e rimischia
+            if (levelData.currentIndex >= levelData.questions.length) {
+                console.log(`Completate tutte le ${levelData.questions.length} domande del livello ${currentLevel}, rimescolo...`);
+                shuffleArray(levelData.questions);
+                levelData.currentIndex = 0;
+            }
+            
+            const question = levelData.questions[levelData.currentIndex];
+            levelData.currentIndex++;
+            
+            console.log(`Livello ${currentLevel}, domanda ${levelData.currentIndex}/${levelData.questions.length}: ${question.num1} × ${question.num2}`);
+            
+            return {
+                num1: question.num1,
+                num2: question.num2,
+                answer: question.answer
+            };
+        }
+        
+        function newQuestion() {
+            if (!gameActive) return;
+            
+            currentQuestion = generateRandomQuestion();
+            
+            document.getElementById('question').textContent = `${currentQuestion.num1} × ${currentQuestion.num2} = ?`;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+            document.getElementById('feedback').textContent = '';
+            
+            updateProgress();
+        }
+        
+        function checkAnswer() {
+            if (isGameExpired()) return;
+            if (!gameActive || !gameStarted) return;
+            
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const feedback = document.getElementById('feedback');
+            
+            if (isNaN(userAnswer)) {
+                feedback.textContent = '⚠️ Inserisci un numero!';
+                feedback.className = 'feedback incorrect';
+                playIncorrectSound();
+                return;
+            }
+            
+            questionsAnswered++;
+            updateStats();
+            
+            if (userAnswer === currentQuestion.answer) {
+                score += 10;
+                feedback.textContent = '🎉 Corretto! Bravo!';
+                feedback.className = 'feedback correct';
+                playCorrectSound();
+                
+                setTimeout(() => {
+                    if (questionsAnswered < totalQuestions && gameActive) {
+                        newQuestion();
+                    } else {
+                        endGame();
+                    }
+                }, 1500);
+            } else {
+                feedback.textContent = `❌ Sbagliato! La risposta è ${currentQuestion.answer}`;
+                feedback.className = 'feedback incorrect';
+                playIncorrectSound();
+                
+                setTimeout(() => {
+                    if (questionsAnswered < totalQuestions && gameActive) {
+                        newQuestion();
+                    } else {
+                        endGame();
+                    }
+                }, 2000);
+            }
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('timer').textContent = timeLeft;
+        }
+        
+        function updateProgress() {
+            const progress = (questionsAnswered / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        function startTimer() {
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+            
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 10 && timeLeft > 0 && gameActive) {
+                    playWarningSound();
+                }
+                
+                if (timeLeft <= 0 || !gameActive) {
+                    clearInterval(gameTimer);
+                    gameTimer = null;
+                    if (gameActive) endGame();
+                }
+            }, 1000);
+        }
+        
+        function stopTimer() {
+            if (gameTimer) {
+                clearInterval(gameTimer);
+                gameTimer = null;
+            }
+        }
+        
+        function endGame() {
+            gameActive = false;
+            stopTimer();
+            
+            const feedback = document.getElementById('feedback');
+            const percentage = Math.round((score / (totalQuestions * 10)) * 100);
+            
+            playGameEndSound();
+            
+            let message = `🏁 Gioco finito! Punteggio: ${score}/${totalQuestions * 10} (${percentage}%)`;
+            
+            if (percentage >= 90) message += ' 🌟 ECCELLENTE!';
+            else if (percentage >= 70) message += ' 👍 BRAVO!';
+            else if (percentage >= 50) message += ' 📚 Continua a esercitarti!';
+            else message += ' 💪 Non mollare, riprova!';
+            
+            feedback.textContent = message;
+            feedback.className = 'feedback';
+            
+            // Non chiede più se vuole giocare ancora
+            document.getElementById('answerInput').disabled = true;
+        }
+        
+        // Event listeners
+        document.getElementById('answerInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        document.addEventListener('click', function() {
+            initAudio();
+        }, { once: true });
+        
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn') || e.target.classList.contains('control-button')) {
+                playClickSound();
+            }
+        });
+        
+        // Prevent zoom on double tap for mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Initialize game
+        initializeLevelQuestions(); // Inizializza il sistema anti-ripetizione
+        updateStats();
+        stopTimer();
+        
+        if (isGameExpired()) {
+            disableExpiredGame();
+        } else {
+            document.getElementById('feedback').textContent = '👆 Scegli un livello per iniziare!';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('answerInput').disabled = true;
+            document.getElementById('question').textContent = 'Seleziona un livello';
+        }
+        
+        document.getElementById('questionProgress').textContent = '0';
+        
+        console.log('🎮 Sfida Tabelline inizializzata con sistema anti-ripetizione avanzato!');
+    </script>
+</body>
+</html>

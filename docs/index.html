@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giochi Educativi by Maestro Alberto - PWA v8.3.5</title>
+    <meta name="description" content="Piattaforma di giochi educativi per studenti con sistema PWA unificato. Include Matematica sul Divano 3ª, Sfida Tabelline e Sfida Matematica in Famiglia 3ª.">
+    <meta name="keywords" content="giochi educativi, matematica, tabelline, PWA, studenti, famiglia">
+    <meta name="author" content="Maestro Alberto Fogliata">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="msapplication-TileColor" content="#667eea">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(45deg, #ff6b6b, #ffa500);
+            --success-gradient: linear-gradient(45deg, #4CAF50, #45a049);
+            --warning-gradient: linear-gradient(45deg, #FF9800, #F57C00);
+            --matematica-gradient: linear-gradient(135deg, #2196F3 0%, #4CAF50 100%);
+            --tabelline-gradient: linear-gradient(135deg, #9C27B0 0%, #E91E63 100%);
+            --sfida-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: var(--accent-gradient);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: headerShimmer 6s infinite;
+        }
+        
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin: 0 0 0.5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+        
+        .container {
+            padding: 2rem;
+            transition: padding-top 0.3s ease;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .game-title {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            margin-bottom: 1rem;
+            color: #333;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        
+        .game-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .play-button {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Stili specifici per ogni gioco */
+        .matematica {
+            background: var(--matematica-gradient);
+            color: white;
+        }
+        
+        .matematica .game-description {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .matematica .play-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .tabelline {
+            background: var(--tabelline-gradient);
+            color: white;
+        }
+        
+        .tabelline .game-description {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .tabelline .play-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+        
+        .sfida-matematica {
+            background: var(--sfida-gradient);
+            color: white;
+            position: relative;
+        }
+        
+        .sfida-matematica .game-description {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .sfida-matematica .play-button {
+            background: var(--accent-gradient);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .sfida-matematica::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+            z-index: 0;
+        }
+        
+        .sfida-matematica > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .smart-install-card {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+        }
+        
+        .smart-install-card .game-description {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .smart-install-card .play-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+        }
+        
+        .coming-soon {
+            background: var(--warning-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .coming-soon::after {
+            content: "PRESTO DISPONIBILE";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            background: rgba(255, 255, 255, 0.9);
+            color: #FF9800;
+            padding: 0.5rem 2rem;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 20px;
+            z-index: 2;
+        }
+        
+        .device-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.3);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: var(--success-gradient);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .new-badge {
+            background: var(--accent-gradient);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin: 10px 0;
+        }
+        
+        .feature-item {
+            color: rgba(255, 255, 255, 0.95);
+            margin: 8px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feature-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .footer {
+            background: rgba(0,0,0,0.1);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 🔧 FIX: Carta installazione nascosta di default */
+        #install-card {
+            display: none;
+        }
+        
+        /* Stili per installazione */
+        .install-card-hidden {
+            display: none !important;
+        }
+        
+        .install-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .install-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .install-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .install-overlay.show .install-modal {
+            transform: scale(1);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        
+        .understand-button {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-family: inherit;
+        }
+        
+        /* 🟢 SISTEMA AGGIORNAMENTI PWA v8.3.5 */
+        .update-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 20px;
+            z-index: 10000;
+            box-shadow: 0 2px 20px rgba(40, 167, 69, 0.3);
+            transform: translateY(-100%);
+            transition: all 0.3s ease;
+            border-bottom: 3px solid rgba(255,255,255,0.2);
+        }
+        
+        .update-banner.show {
+            transform: translateY(0);
+            animation: greenPulse 3s infinite;
+        }
+        
+        @keyframes greenPulse {
+            0%, 100% { 
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                box-shadow: 0 2px 20px rgba(40, 167, 69, 0.3);
+            }
+            50% { 
+                background: linear-gradient(135deg, #34ce57 0%, #2dd4aa 100%);
+                box-shadow: 0 2px 25px rgba(40, 167, 69, 0.5);
+            }
+        }
+        
+        .update-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .update-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .update-pulse {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+        
+        .update-message {
+            font-weight: bold;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+        
+        .update-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .update-button {
+            background: white;
+            color: #28a745;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(255,255,255,0.2);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+        
+        .update-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+        }
+        
+        .update-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .dismiss-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+        }
+        
+        .dismiss-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .updating-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(40, 167, 69, 0.3);
+            border-top: 2px solid #28a745;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Adattamento layout con banner */
+        body.update-banner-visible {
+            padding-top: 80px;
+        }
+        
+        body.update-banner-visible .header {
+            margin-top: 0;
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 10001;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+            font-weight: bold;
+            max-width: 350px;
+        }
+        
+        .toast.error {
+            background: #f44336;
+            box-shadow: 0 4px 20px rgba(244, 67, 54, 0.3);
+        }
+        
+        .toast.warning {
+            background: #ff9800;
+            box-shadow: 0 4px 20px rgba(255, 152, 0, 0.3);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .update-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .update-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            body.update-banner-visible {
+                padding-top: 120px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .game-card {
+                padding: 1.5rem;
+            }
+            
+            .update-banner {
+                padding: 12px 15px;
+            }
+            
+            body.update-banner-visible {
+                padding-top: 100px;
+            }
+        }
+        
+        /* Accessibilità */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .game-card {
+                border: 2px solid #000;
+            }
+            
+            .play-button {
+                border: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 🟢 Banner Aggiornamenti PWA v8.3.5 -->
+    <div class="update-banner" id="update-banner">
+        <div class="update-content">
+            <div class="update-text">
+                <div class="update-pulse"></div>
+                <span class="update-message" id="update-message">🚀 Nuovo aggiornamento disponibile!</span>
+            </div>
+            <div class="update-actions">
+                <button class="update-button" id="update-button" onclick="updateApp()">
+                    ✨ Aggiorna Ora
+                </button>
+                <button class="dismiss-button" onclick="dismissUpdate()">
+                    ⏰ Più Tardi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>🎮 Giochi Educativi</h1>
+        <p>by Maestro Alberto Fogliata <span class="version-badge">v8.3.5</span></p>
+    </div>
+
+    <div class="container">
+        <div class="games-grid">
+            <!-- Smart Install Card - 🔧 NASCOSTA DI DEFAULT -->
+            <div class="game-card smart-install-card" id="install-card">
+                <div class="device-badge" id="device-badge">🔍 Rilevamento...</div>
+                <div class="game-icon">🤖</div>
+                <div class="game-title">Installazione Smart</div>
+                <div class="game-description" id="smart-description">
+                    🧠 Rilevamento automatico del dispositivo per la migliore esperienza di installazione...
+                </div>
+                <button class="play-button" onclick="smartInstall()">🚀 Installa App</button>
+            </div>
+
+            <!-- Matematica sul Divano 3ª -->
+            <div class="game-card matematica" onclick="navigateToGame('matematica.html')">
+                <div class="game-icon">🧮</div>
+                <div class="game-title">Matematica sul Divano 3ª</div>
+                <div class="game-description">
+                    <strong>6 operazioni complete con correzioni avanzate.</strong><br>
+                    Sistema anti-ripetizione perfezionato, navigazione ottimizzata.<br>
+                    <em><strong>📖 LEGGI SEMPRE LE CONSEGNE</strong></em>
+                </div>
+                <a href="matematica.html" class="play-button" onclick="event.stopPropagation()">🚀 Gioca Ora</a>
+            </div>
+
+            <!-- Sfida Tabelline -->
+            <div class="game-card tabelline" onclick="navigateToGame('tabelline.html')">
+                <div class="game-icon">🎯</div>
+                <div class="game-title">Sfida Tabelline</div>
+                <div class="game-description">
+                    <strong>Timer di 60 secondi e 3 livelli di difficoltà.</strong><br>
+                    Sistema anti-ripetizione avanzato per un allenamento efficace e divertente.
+                </div>
+                <a href="tabelline.html" class="play-button" onclick="event.stopPropagation()">⚡ Inizia Sfida</a>
+            </div>
+
+            <!-- 🎯 Sfida Matematica in Famiglia 3ª - INTEGRATA -->
+            <div class="game-card sfida-matematica" id="sfida-card" onclick="navigateToGame('sfida-matematica.html')">
+                <div class="game-icon">🏆</div>
+                <div class="game-title">
+                    Sfida Matematica in Famiglia 3ª
+                </div>
+                <div class="game-description">
+                    <strong>🎯 Sistema completo di sfide giornaliere per famiglie!</strong>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">👤</span>
+                            <span>Profili personalizzati con 10 avatar</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🧮</span>
+                            <span>4 tipologie: Calcolo, Logica, Problemi, Geometria</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔄</span>
+                            <span>Sfide che si rinnovano automaticamente ogni giorno!</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="sfida-matematica.html" class="play-button" onclick="event.stopPropagation()">🎯 Inizia le Sfide</a>
+            </div>
+
+            <!-- Altro in arrivo -->
+            <div class="game-card coming-soon">
+                <div class="game-icon">🎲</div>
+                <div class="game-title">Altro in arrivo</div>
+                <div class="game-description">
+                    Nuovi giochi educativi e attività didattiche sono in fase di sviluppo. 
+                    Saranno automaticamente integrati nel sistema PWA unificato.
+                </div>
+                <button class="play-button" disabled>🔜 Presto Disponibile</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Giochi Disponibili</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1</div>
+                <div class="stat-label">In Sviluppo</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Divertimento</div>
+            </div>
+        </div>
+        <p>© 2025 Maestro Alberto Fogliata - Docente Scuola Primaria I.C. Verolanuova (Bs)</p>
+    </div>
+
+    <!-- Modal di installazione -->
+    <div class="install-overlay" id="install-overlay">
+        <div class="install-modal">
+            <button class="close-button" onclick="closeInstallModal()">×</button>
+            <div id="install-content">
+                <!-- Contenuto dinamico generato da JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIGURAZIONE PWA v8.3.5 ==========
+        const PWA_CONFIG = {
+            VERSION: '8.3.5',
+            SERVICE_WORKER_URL: './sw.js',
+            CACHE_NAME: 'giochi-educativi-v8.3.5',
+            DATA_CACHE_NAME: 'giochi-data-v8.3.5',
+            UPDATE_CHECK_INTERVAL: 30000, // 30 secondi - allineato con sw.js
+            AUTO_DISMISS_DELAY: 15000, // 15 secondi
+            GAMES: {
+                matematica: { file: 'matematica.html', name: 'Matematica sul Divano 3ª' },
+                tabelline: { file: 'tabelline.html', name: 'Sfida Tabelline' },
+                sfidaMatematica: { file: 'sfida-matematica.html', name: 'Sfida Matematica in Famiglia 3ª' }
+            }
+        };
+
+        // ========== STATO GLOBALE ==========
+        let deviceInfo = {};
+        let deferredPrompt = null;
+        let swRegistration = null;
+        let updateDismissed = false;
+        let refreshing = false;
+        let newWorker = null;
+        let updateCheckInterval = null;
+
+        console.log(`🚀 PWA Giochi Educativi v${PWA_CONFIG.VERSION} - Inizializzazione...`);
+
+        // ========== 🟢 GESTIONE SERVICE WORKER v8.3.5 ==========
+        
+        class ServiceWorkerManager {
+            constructor() {
+                this.registration = null;
+                this.isUpdating = false;
+                this.pendingUpdate = false;
+            }
+
+            async init() {
+                if (!('serviceWorker' in navigator)) {
+                    console.log('❌ Service Worker non supportato');
+                    showToast('⚠️ Service Worker non supportato in questo browser', 'warning');
+                    return false;
+                }
+
+                try {
+                    console.log('🔧 Registrazione Service Worker v8.3.5...');
+                    
+                    this.registration = await navigator.serviceWorker.register(PWA_CONFIG.SERVICE_WORKER_URL, {
+                        scope: './',
+                        updateViaCache: 'none' // Forza controllo aggiornamenti
+                    });
+
+                    console.log('✅ Service Worker registrato:', this.registration.scope);
+                    swRegistration = this.registration;
+
+                    // Setup event listeners
+                    this.setupEventListeners();
+                    
+                    // Controllo immediato per aggiornamenti
+                    await this.checkForUpdates();
+                    
+                    // Setup controlli periodici - allineato con sw.js (30 secondi)
+                    this.setupPeriodicUpdates();
+                    
+                    return true;
+
+                } catch (error) {
+                    console.error('❌ Errore registrazione Service Worker:', error);
+                    showToast('❌ Errore inizializzazione PWA', 'error');
+                    return false;
+                }
+            }
+
+            setupEventListeners() {
+                // Nuovo SW trovato
+                this.registration.addEventListener('updatefound', () => {
+                    console.log('🔄 Nuovo Service Worker in installazione...');
+                    const installingWorker = this.registration.installing;
+                    
+                    if (installingWorker) {
+                        installingWorker.addEventListener('statechange', () => {
+                            console.log(`📱 Nuovo SW state: ${installingWorker.state}`);
+                            
+                            if (installingWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    console.log('🟢 Nuovo SW in attesa - mostro banner');
+                                    newWorker = installingWorker;
+                                    this.pendingUpdate = true;
+                                    if (!updateDismissed) {
+                                        this.showUpdateBanner('🍎 Fix iOS Safari: Sfida Matematica ora compatibile iPhone/iPad!');
+                                    }
+                                } else {
+                                    console.log('✅ Primo SW installato');
+                                    this.notifyUpdateCompleted('✅ PWA installata e pronta!');
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // SW in attesa già presente
+                if (this.registration.waiting && !updateDismissed) {
+                    console.log('🟢 SW già in waiting - mostro banner immediatamente');
+                    newWorker = this.registration.waiting;
+                    this.pendingUpdate = true;
+                    this.showUpdateBanner('🍎 Fix iOS Safari: Sfida Matematica ora compatibile iPhone/iPad!');
+                }
+
+                // Messaggi dal Service Worker
+                navigator.serviceWorker.addEventListener('message', this.handleSWMessage.bind(this));
+
+                // Cambio controller
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('🔄 Controller SW cambiato');
+                    if (!refreshing) {
+                        refreshing = true;
+                        this.showUpdatingState();
+                        setTimeout(() => window.location.reload(), 1500);
+                    }
+                });
+            }
+
+            handleSWMessage(event) {
+                const { type, message, version, gameAdded, newFeatures, forceReload } = event.data;
+                console.log('💬 Messaggio dal SW:', event.data);
+
+                switch (type) {
+                    case 'SW_INSTALLED':
+                        if (!updateDismissed) {
+                            this.showUpdateBanner(message || '🍎 Fix iOS Safari: Sfida Matematica ora compatibile!');
+                        }
+                        break;
+
+                    case 'SW_UPDATED':
+                        if (!updateDismissed) {
+                            let updateMessage = message || '🚀 Nuovo aggiornamento disponibile!';
+                            if (gameAdded) {
+                                updateMessage = `🎯 ${gameAdded}`;
+                            }
+                            this.showUpdateBanner(updateMessage);
+                        }
+                        break;
+
+                    case 'SW_ACTIVATED':
+                        this.notifyUpdateCompleted('✅ Aggiornamento iOS Safari completato!');
+                        if (gameAdded) {
+                            this.highlightNewGame();
+                        }
+                        // Se forceReload è true, ricarica automaticamente dopo il messaggio
+                        if (forceReload && !refreshing) {
+                            refreshing = true;
+                            setTimeout(() => window.location.reload(), 2000);
+                        }
+                        break;
+
+                    case 'FORCE_RELOAD':
+                        console.log('🔄 Reload forzato dal SW');
+                        if (!refreshing) {
+                            refreshing = true;
+                            this.showUpdatingState();
+                            showToast(message || '🔄 Completamento aggiornamento automatico...', 'success');
+                            setTimeout(() => window.location.reload(), 1000);
+                        }
+                        break;
+
+                    case 'UPDATE_COMPLETED':
+                        this.notifyUpdateCompleted(message || '✅ Aggiornamento completato!');
+                        break;
+
+                    case 'RELOAD_REQUIRED':
+                        this.showUpdatingState();
+                        setTimeout(() => {
+                            if (!refreshing) {
+                                refreshing = true;
+                                window.location.reload();
+                            }
+                        }, 2000);
+                        break;
+
+                    case 'SFIDA_UPDATED':
+                        showToast(message, 'success');
+                        this.highlightNewGame();
+                        break;
+
+                    case 'PROFILES_SYNCED':
+                    case 'GAME_DATA_SYNCED':
+                        console.log('🔄 Sincronizzazione background:', message);
+                        // Toast silenzioso per non disturbare l'utente
+                        break;
+                }
+            }
+
+            async checkForUpdates() {
+                if (this.registration && !this.isUpdating) {
+                    try {
+                        console.log('🔍 Controllo aggiornamenti...');
+                        await this.registration.update();
+                    } catch (error) {
+                        console.log('⚠️ Errore controllo aggiornamenti:', error);
+                    }
+                }
+            }
+
+            setupPeriodicUpdates() {
+                // Controllo aggiornamenti ogni 30 secondi - allineato con sw.js
+                updateCheckInterval = setInterval(() => {
+                    if (!updateDismissed && !this.isUpdating) {
+                        this.checkForUpdates();
+                    }
+                }, PWA_CONFIG.UPDATE_CHECK_INTERVAL);
+            }
+
+            showUpdateBanner(message = '🚀 Nuovo aggiornamento disponibile!') {
+                console.log('🟢 Mostrando banner aggiornamento');
+                
+                const banner = document.getElementById('update-banner');
+                const messageEl = document.getElementById('update-message');
+                const body = document.body;
+
+                if (!banner || !messageEl) {
+                    console.log('❌ Elementi banner non trovati');
+                    return;
+                }
+
+                // Reset stato
+                updateDismissed = false;
+                
+                // Aggiorna messaggio
+                messageEl.textContent = message;
+
+                // Mostra banner con animazione
+                banner.classList.remove('show');
+                body.classList.remove('update-banner-visible');
+                
+                setTimeout(() => {
+                    banner.classList.add('show');
+                    body.classList.add('update-banner-visible');
+                }, 100);
+
+                // Auto-dismiss dopo 15 secondi
+                setTimeout(() => {
+                    if (banner.classList.contains('show') && !updateDismissed && !this.isUpdating) {
+                        console.log('⏰ Auto-dismiss banner');
+                        this.dismissUpdate();
+                    }
+                }, PWA_CONFIG.AUTO_DISMISS_DELAY);
+            }
+
+            hideUpdateBanner() {
+                const banner = document.getElementById('update-banner');
+                const body = document.body;
+                
+                if (banner) {
+                    banner.classList.remove('show');
+                    body.classList.remove('update-banner-visible');
+                    updateDismissed = false; // Reset per prossimi aggiornamenti
+                }
+            }
+
+            showUpdatingState() {
+                const messageEl = document.getElementById('update-message');
+                const updateBtn = document.getElementById('update-button');
+                
+                if (messageEl && updateBtn) {
+                    messageEl.innerHTML = '<span class="updating-spinner"></span>Aggiornamento automatico in corso...';
+                    updateBtn.disabled = true;
+                    updateBtn.textContent = 'Attendere...';
+                    updateBtn.style.opacity = '0.7';
+                }
+            }
+
+            async updateApp() {
+                if (this.isUpdating) return;
+                
+                console.log('🟢 Aggiornamento richiesto dall\'utente');
+                this.isUpdating = true;
+                
+                this.showUpdatingState();
+                showToast('🔄 Aggiornamento automatico in corso...', 'success');
+
+                try {
+                    if (newWorker) {
+                        console.log('📤 Invio skipWaiting al nuovo SW');
+                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    } else if (this.registration && this.registration.waiting) {
+                        console.log('📤 Invio skipWaiting al SW waiting');
+                        this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    } else {
+                        console.log('🔄 Ricarico direttamente');
+                        setTimeout(() => {
+                            if (!refreshing) {
+                                refreshing = true;
+                                window.location.reload();
+                            }
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('❌ Errore aggiornamento:', error);
+                    showToast('❌ Errore durante l\'aggiornamento', 'error');
+                    this.isUpdating = false;
+                }
+            }
+
+            dismissUpdate() {
+                console.log('❌ Banner chiuso dall\'utente');
+                this.hideUpdateBanner();
+                updateDismissed = true;
+
+                // Reset dismiss dopo 5 minuti
+                setTimeout(() => {
+                    console.log('🔄 Reset dismiss status');
+                    updateDismissed = false;
+                }, 300000);
+            }
+
+            notifyUpdateCompleted(message) {
+                this.hideUpdateBanner();
+                showToast(message, 'success');
+                this.isUpdating = false;
+                this.pendingUpdate = false;
+            }
+
+            highlightNewGame() {
+                const sfidaCard = document.getElementById('sfida-card');
+                if (sfidaCard) {
+                    console.log('🎯 Evidenziazione nuovo gioco');
+                    
+                    // Effetto speciale
+                    sfidaCard.style.animation = 'pulse 2s ease-in-out 3';
+                    sfidaCard.style.boxShadow = '0 0 30px rgba(255, 107, 107, 0.8)';
+                    
+                    // Scroll verso il gioco
+                    setTimeout(() => {
+                        sfidaCard.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 1000);
+                    
+                    // Rimuovi effetto
+                    setTimeout(() => {
+                        sfidaCard.style.animation = '';
+                        sfidaCard.style.boxShadow = '';
+                    }, 6000);
+                }
+            }
+        }
+
+        // Istanza globale Service Worker Manager
+        const swManager = new ServiceWorkerManager();
+
+        // ========== FUNZIONI GLOBALI PER IL TEMPLATE ==========
+        
+        function updateApp() {
+            swManager.updateApp();
+        }
+
+        function dismissUpdate() {
+            swManager.dismissUpdate();
+        }
+
+        // ========== GESTIONE DISPOSITIVI E INSTALLAZIONE ==========
+        
+        function detectDevice() {
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            
+            deviceInfo = {
+                isDesktop: !/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent),
+                isWindows: /Windows/i.test(platform),
+                isMac: /Mac/i.test(platform),
+                isAndroid: /Android/i.test(userAgent),
+                isiOS: /iPhone|iPad|iPod/i.test(userAgent),
+                isChrome: /Chrome/i.test(userAgent) && !/Edg/i.test(userAgent),
+                isEdge: /Edg/i.test(userAgent),
+                isFirefox: /Firefox/i.test(userAgent),
+                isSafari: /Safari/i.test(userAgent) && !/Chrome/i.test(userAgent),
+                userAgent: userAgent,
+                platform: platform
+            };
+            
+            console.log('🔍 Dispositivo rilevato:', deviceInfo);
+            return deviceInfo;
+        }
+
+        function isAppInstalled() {
+            // Modalità standalone
+            if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+                return true;
+            }
+            
+            // iOS standalone
+            if (deviceInfo.isiOS && window.navigator.standalone) {
+                return true;
+            }
+            
+            // Flag localStorage
+            try {
+                return localStorage.getItem('app-installed') === 'true';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function updateSmartCard() {
+            const badge = document.getElementById('device-badge');
+            const description = document.getElementById('smart-description');
+            
+            if (!badge || !description) return;
+            
+            if (deviceInfo.isDesktop) {
+                badge.textContent = '💻 Desktop';
+                if (deviceInfo.isChrome || deviceInfo.isEdge) {
+                    description.innerHTML = '🖥️ <strong>Browser Desktop supportato!</strong><br>Clicca per installare la PWA sul tuo computer come app nativa!';
+                } else {
+                    description.innerHTML = '🖥️ <strong>Browser Desktop rilevato!</strong><br>⚠️ Per installare l\'app usa Chrome o Edge per la migliore esperienza!';
+                }
+            } else if (deviceInfo.isAndroid) {
+                badge.textContent = '📱 Android';
+                if (deviceInfo.isChrome) {
+                    description.innerHTML = '📱 <strong>Android Chrome perfetto!</strong><br>Clicca per installare l\'app direttamente sul telefono!';
+                } else {
+                    description.innerHTML = '📱 <strong>Android rilevato!</strong><br>⚠️ Apri con Chrome per installare l\'app!';
+                }
+            } else if (deviceInfo.isiOS) {
+                badge.textContent = '🍎 iOS';
+                if (deviceInfo.isSafari) {
+                    description.innerHTML = '🍎 <strong>iOS Safari perfetto!</strong><br>✨ <em>Ora Sfida Matematica funziona perfettamente su iPhone/iPad!</em><br>Clicca per aggiungere l\'app alla schermata home!';
+                } else {
+                    description.innerHTML = '🍎 <strong>iOS rilevato!</strong><br>⚠️ Apri con Safari per aggiungere l\'app e goderti il fix per Sfida Matematica!';
+                }
+            } else {
+                badge.textContent = '🔍 Altro';
+                description.innerHTML = '❓ <strong>Dispositivo rilevato!</strong><br>Clicca per istruzioni di installazione personalizzate.';
+            }
+        }
+
+        // 🔧 FIX: Nuova funzione per MOSTRARE la carta installazione
+        function showInstallCard() {
+            const installCard = document.getElementById('install-card');
+            if (installCard) {
+                console.log('📱 Mostro carta installazione - PWA non installata');
+                
+                // Mostra la carta con animazione
+                installCard.style.display = 'block';
+                installCard.style.opacity = '0';
+                installCard.style.transform = 'scale(0.8)';
+                
+                // Animazione di entrata
+                setTimeout(() => {
+                    installCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    installCard.style.opacity = '1';
+                    installCard.style.transform = 'scale(1)';
+                }, 50);
+
+                // Forza ridisposizione della griglia
+                requestAnimationFrame(() => {
+                    const gamesGrid = document.querySelector('.games-grid');
+                    if (gamesGrid) {
+                        gamesGrid.style.display = 'none';
+                        setTimeout(() => {
+                            gamesGrid.style.display = 'grid';
+                        }, 10);
+                    }
+                });
+            }
+        }
+
+        function hideInstallCardPermanently() {
+            const installCard = document.getElementById('install-card');
+            if (installCard) {
+                try {
+                    localStorage.setItem('app-installed', 'true');
+                    localStorage.setItem('app-installed-date', new Date().toISOString());
+                } catch (e) {
+                    console.log('⚠️ Impossibile salvare flag installazione');
+                }
+                
+                installCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                installCard.style.opacity = '0';
+                installCard.style.transform = 'scale(0.8)';
+                
+                setTimeout(() => {
+                    installCard.style.display = 'none';
+                    reorganizeGrid();
+                }, 500);
+            }
+        }
+
+        function reorganizeGrid() {
+            const gamesGrid = document.querySelector('.games-grid');
+            if (gamesGrid) {
+                gamesGrid.style.display = 'none';
+                setTimeout(() => {
+                    gamesGrid.style.display = 'grid';
+                }, 10);
+            }
+        }
+
+        function smartInstall() {
+            const overlay = document.getElementById('install-overlay');
+            const content = document.getElementById('install-content');
+            
+            if (!overlay || !content) return;
+            
+            let modalContent = '';
+            
+            if (deviceInfo.isDesktop && (deviceInfo.isChrome || deviceInfo.isEdge)) {
+                modalContent = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💻</div>
+                        <h2>Installazione Desktop PWA</h2>
+                        <p><strong>Il tuo browser supporta l'installazione!</strong></p>
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                            <h4>📋 Istruzioni ${deviceInfo.isChrome ? 'Chrome' : 'Edge'}:</h4>
+                            <ol>
+                                <li><strong>Clicca sui tre puntini ⋮ in alto a destra</strong></li>
+                                <li><strong>Cerca "Installa ${document.title.split(' ')[0]}" o "Salva come app"</strong></li>
+                                <li><strong>Conferma l'installazione</strong></li>
+                                <li>L'app apparirà nel menu Start/Applicazioni!</li>
+                            </ol>
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 15px; border-left: 4px solid #ffc107;">
+                                <p style="margin: 0; font-weight: bold; color: #856404;">
+                                    ⚠️ IMPORTANTE: Clicca "Ho installato l'app" dopo l'installazione per rimuovere questa card.
+                                </p>
+                            </div>
+                        </div>
+                        <button class="understand-button" onclick="markAsInstalled()">✅ Ho installato l'app</button>
+                    </div>
+                `;
+            } else if (deviceInfo.isAndroid && deviceInfo.isChrome) {
+                modalContent = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+                        <h2>Installazione Android PWA</h2>
+                        <p><strong>Chrome supporta l'installazione nativa!</strong></p>
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                            <h4>📋 Istruzioni Chrome Android:</h4>
+                            <ol>
+                                <li><strong>Tocca i tre puntini ⋮ in alto a destra</strong></li>
+                                <li><strong>Trova "Installa app" o "Aggiungi a schermata Home"</strong></li>
+                                <li><strong>Conferma "Installa"</strong></li>
+                                <li>L'app apparirà nella schermata home!</li>
+                            </ol>
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 15px; border-left: 4px solid #ffc107;">
+                                <p style="margin: 0; font-weight: bold; color: #856404;">
+                                    ⚠️ IMPORTANTE: Clicca "Ho installato l'app" dopo l'installazione.
+                                </p>
+                            </div>
+                        </div>
+                        <button class="understand-button" onclick="markAsInstalled()">✅ Ho installato l'app</button>
+                    </div>
+                `;
+            } else if (deviceInfo.isiOS && deviceInfo.isSafari) {
+                modalContent = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🍎</div>
+                        <h2>Installazione iOS Safari</h2>
+                        <p><strong>Aggiungi alla schermata home!</strong></p>
+                        <div style="background: #d4edda; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #28a745;">
+                            <p style="margin: 0; font-weight: bold; color: #155724;">
+                                ✨ <strong>NOVITÀ v8.3.5:</strong> Sfida Matematica ora funziona perfettamente su iPhone e iPad!
+                            </p>
+                        </div>
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                            <h4>📋 Istruzioni Safari iOS:</h4>
+                            <ol>
+                                <li><strong>Tocca il pulsante "Condividi" 📤 in basso</strong></li>
+                                <li><strong>Scorri e trova "Aggiungi a schermata Home"</strong></li>
+                                <li><strong>Conferma "Aggiungi"</strong></li>
+                                <li>L'app apparirà nella schermata home come app nativa!</li>
+                            </ol>
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 15px; border-left: 4px solid #ffc107;">
+                                <p style="margin: 0; font-weight: bold; color: #856404;">
+                                    ⚠️ IMPORTANTE: Clicca "Ho aggiunto l'app" dopo averla aggiunta.
+                                </p>
+                            </div>
+                        </div>
+                        <button class="understand-button" onclick="markAsInstalled()">✅ Ho aggiunto l'app</button>
+                    </div>
+                `;
+            } else {
+                modalContent = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                        <h2>Browser non ottimale</h2>
+                        <p>Per la migliore esperienza PWA:</p>
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                            <h4>💡 Browser consigliati:</h4>
+                            <ul>
+                                <li><strong>Desktop:</strong> Chrome o Edge</li>
+                                <li><strong>Android:</strong> Chrome</li>
+                                <li><strong>iOS:</strong> Safari (ora con fix per Sfida Matematica!)</li>
+                            </ul>
+                            <p>Con questi browser potrai installare l'app come PWA nativa!</p>
+                        </div>
+                        <button class="understand-button" onclick="closeInstallModal()">Ho capito</button>
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = modalContent;
+            overlay.classList.add('show');
+        }
+
+        function closeInstallModal() {
+            const overlay = document.getElementById('install-overlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function markAsInstalled() {
+            try {
+                localStorage.setItem('app-installed', 'true');
+                localStorage.setItem('app-installed-date', new Date().toISOString());
+                showToast('✅ Perfetto! Card di installazione rimossa.', 'success');
+                closeInstallModal();
+                setTimeout(() => hideInstallCardPermanently(), 1000);
+            } catch (e) {
+                showToast('⚠️ Impossibile salvare le impostazioni', 'error');
+            }
+        }
+
+        // ========== NAVIGAZIONE E UTILITY ==========
+        
+        function navigateToGame(gameFile) {
+            console.log(`🎮 Navigazione a: ${gameFile}`);
+            showToast(`🎮 Caricamento ${PWA_CONFIG.GAMES[gameFile.replace('.html', '')] ? PWA_CONFIG.GAMES[gameFile.replace('.html', '')].name : gameFile}...`, 'success');
+            
+            setTimeout(() => {
+                window.location.href = gameFile;
+            }, 500);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            // Stile basato sul tipo
+            const styles = {
+                success: { background: '#4CAF50', shadow: 'rgba(76, 175, 80, 0.3)' },
+                error: { background: '#f44336', shadow: 'rgba(244, 67, 54, 0.3)' },
+                warning: { background: '#ff9800', shadow: 'rgba(255, 152, 0, 0.3)' }
+            };
+            
+            if (styles[type]) {
+                toast.style.background = styles[type].background;
+                toast.style.boxShadow = `0 4px 20px ${styles[type].shadow}`;
+            }
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }, 4000);
+        }
+
+        // ========== EVENT LISTENERS ==========
+        
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('📲 Native install prompt detected');
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Aggiorna il comportamento della card
+            const installCard = document.getElementById('install-card');
+            if (installCard && installCard.style.display !== 'none') {
+                const playButton = installCard.querySelector('.play-button');
+                if (playButton) {
+                    playButton.onclick = function(event) {
+                        event.stopPropagation();
+                        triggerNativeInstall();
+                    };
+                }
+            }
+        });
+
+        // PWA Installed
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('🎉 PWA installata con successo!');
+            deferredPrompt = null;
+            showToast('🎉 App installata con successo!', 'success');
+            markAsInstalled();
+        });
+
+        function triggerNativeInstall() {
+            if (deferredPrompt) {
+                console.log('🚀 Trigger native install prompt');
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ Installazione accettata');
+                        markAsInstalled();
+                    } else {
+                        console.log('❌ Installazione rifiutata');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                smartInstall();
+            }
+        }
+
+        // Click fuori modal
+        document.addEventListener('click', function(event) {
+            const overlay = document.getElementById('install-overlay');
+            const modal = document.querySelector('.install-modal');
+            
+            if (overlay && modal && event.target === overlay) {
+                closeInstallModal();
+            }
+        });
+
+        // ========== INIZIALIZZAZIONE ==========
+        
+        async function initializeApp() {
+            console.log(`🚀 Inizializzazione PWA v${PWA_CONFIG.VERSION}...`);
+            
+            try {
+                // 1. Rileva dispositivo
+                detectDevice();
+                
+                // 2. Inizializza Service Worker
+                const swInitialized = await swManager.init();
+                
+                // 3. 🔧 FIX: Gestione installazione MIGLIORATA
+                if (isAppInstalled()) {
+                    console.log('✅ PWA già installata - carta rimane nascosta');
+                    // La carta rimane nascosta (display: none nel CSS)
+                } else {
+                    console.log('📱 PWA non installata - mostro carta installazione');
+                    showInstallCard(); // 🔧 FIX: MOSTRA invece di nascondere
+                    setTimeout(updateSmartCard, 100); // 🔧 FIX: Ridotto delay
+                }
+                
+                // 4. Log stato finale
+                console.log('✅ Inizializzazione completata');
+                console.log(`🎮 Giochi disponibili: ${Object.keys(PWA_CONFIG.GAMES).length}`);
+                console.log(`🟢 Service Worker: ${swInitialized ? 'ATTIVO v8.3.5' : 'NON DISPONIBILE'}`);
+                console.log(`📱 PWA Status: ${isAppInstalled() ? 'INSTALLATA' : 'NON INSTALLATA'}`);
+                
+                // 5. Toast di benvenuto
+                if (swInitialized) {
+                    setTimeout(() => {
+                        showToast(`🎮 PWA v${PWA_CONFIG.VERSION} caricata - iOS Safari Fix attivo!`, 'success');
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Errore inizializzazione:', error);
+                showToast('⚠️ Errore durante l\'inizializzazione', 'error');
+            }
+        }
+
+        // ========== DEBUG FUNCTIONS (Rimuovi in produzione se necessario) ==========
+        
+        function resetInstallationStatus() {
+            try {
+                localStorage.removeItem('app-installed');
+                localStorage.removeItem('app-installed-date');
+                console.log('🔄 Stato installazione resettato');
+                location.reload();
+            } catch (e) {
+                console.log('❌ Impossibile resettare');
+            }
+        }
+
+        function testUpdateBanner() {
+            updateDismissed = false;
+            swManager.showUpdateBanner('🧪 Test: Fix iOS Safari - Sfida Matematica ora compatibile!');
+        }
+
+        function testHighlightGame() {
+            swManager.highlightNewGame();
+        }
+
+        // Esponi funzioni debug
+        window.DEBUG = {
+            resetInstallationStatus,
+            testUpdateBanner,
+            testHighlightGame,
+            forceUpdate: () => swManager.checkForUpdates(),
+            showConfig: () => console.table(PWA_CONFIG),
+            showDeviceInfo: () => console.table(deviceInfo),
+            testShowInstallCard: showInstallCard // 🔧 FIX: Nuova funzione debug
+        };
+
+        // ========== AVVIO ==========
+        
+        // Inizializza quando DOM è pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        console.log(`✅ PWA v${PWA_CONFIG.VERSION} - Script caricato e pronto - iOS Safari Fix attivo`);
+        
+    </script>
+</body>
+</html>
