@@ -666,6 +666,27 @@
             }
         }
         
+        
+        /* --- Effetto riflesso animato su tutte le card --- */
+        .game-card::before {
+            content:"";
+            position:absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .game-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
         /* High contrast mode */
         @media (prefers-contrast: high) {
             .game-card {
@@ -676,37 +697,7 @@
                 border: 2px solid #000;
             }
         }
-    
-/* Effetto riflesso e gradiente su tutte le card */
-.card {
-  position: relative;
-  isolation: isolate;
-  -webkit-box-reflect: below 8px
-    linear-gradient(transparent 0,
-                    rgba(255,255,255,0.25) 25%,
-                    rgba(255,255,255,0.05) 60%,
-                    transparent 100%);
-}
-
-.card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(120% 100% at -10% 0%,
-      rgba(255,255,255,0.45) 0%,
-      rgba(255,255,255,0) 60%),
-    linear-gradient(180deg,
-      rgba(255,255,255,0.18) 0%,
-      rgba(255,255,255,0) 35%);
-  mix-blend-mode: screen;
-  opacity: .7;
-  border-radius: 12px;
-}
-
-</style>
+    </style>
 </head>
 <body>
     <!-- 🟢 Banner Aggiornamenti PWA v8.3.5 -->
