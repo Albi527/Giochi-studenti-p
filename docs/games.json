@@ -292,7 +292,7 @@
     {
       "id": "numeri",
       "title": "Impara i Numeri",
-      "description": "Gioco interattivo per imparare i numeri da 0 a 10.000! 4 modalità di gioco: Ascolta e Scegli, Leggi ad Alta Voce (con microfono), Componi il Numero (drag&drop) e Sfida Velocità. Include tabelle posizionali, sistema punteggi e supporto vocale completo!",
+      "description": "Gioco interattivo per imparare i numeri da 0 a 10.000! 4 modalità di gioco: Ascolta e Scegli, Leggi ad Alta Voce (con microfono), Componi il Numero (drag&drop) e Sfida Velocità. Include tabelle posizionali, sistema punteggi e supporto vocale completo! Modalità 'Parla' ottimizzata senza countdown per un'esperienza più fluida.",
       "icon": "🔢",
       "file": "numeri.html",
       "category": "matematica",
@@ -317,21 +317,22 @@
       },
       "features": [
         "🎧 Modalità 'Ascolta e Scegli' - numeri pronunciati con scelta multipla",
-        "🗣️ Modalità 'Leggi ad Alta Voce' - riconoscimento vocale integrato",
+        "🗣️ Modalità 'Leggi ad Alta Voce' - riconoscimento vocale immediato senza countdown",
         "🔢 Modalità 'Componi il Numero' - drag & drop interattivo",
         "⚡ Modalità 'Sfida Velocità' - quanto sei veloce a leggere?",
         "📊 4 livelli progressivi: 0-100, 101-999, 1.000-5.000, 5.001-10.000",
         "🎯 Sistema punteggi con stelle e badge personalizzati",
         "🏆 Strumenti di aiuto: tabelle posizionali con casa delle migliaia",
         "🔊 Sintesi vocale italiana completa con pronuncia corretta",
-        "🎤 Supporto microfono con gestione permessi automatica",
+        "🎤 Supporto microfono con gestione permessi automatica e avvio immediato",
         "💾 Salvataggio progressi automatico (funziona offline)",
         "📱 Design responsive ottimizzato per tutti i dispositivi",
         "🔧 Gestione cache dedicata handleNumeriGame()",
         "🔄 Sincronizzazione progressi in background",
         "🌐 Fallback offline personalizzato con guida completa",
         "✨ Feedback visivo e sonoro coinvolgente",
-        "🏠 Bottone Home integrato nel sistema unificato"
+        "🏠 Bottone Home integrato nel sistema unificato",
+        "⚡ Modalità vocale ottimizzata - parla immediatamente senza attese"
       ],
       "educational": {
         "targetAge": "5-12 anni",
@@ -358,6 +359,7 @@
         "backgroundTheme": "gradiente blu-viola elegante",
         "dragDropSupport": true,
         "touchOptimized": true,
+        "voiceOptimizations": "immediate_start_no_countdown",
         "systemIntegration": {
           "unifiedPWA": true,
           "localStorageProgressi": true,
@@ -373,7 +375,8 @@
           "customOfflineFallback": "generateNumeriOfflinePage()",
           "microphonePermissionManagement": true,
           "audioContextSupport": true,
-          "webSpeechAPIIntegration": true
+          "webSpeechAPIIntegration": true,
+          "immediateVoiceActivation": true
         }
       },
       "gameSystem": {
@@ -415,8 +418,8 @@
             "name": "LEGGI AD ALTA VOCE", 
             "icon": "🗣️",
             "microphoneRequired": true,
-            "description": "Leggi il numero mostrato ad alta voce",
-            "features": ["riconoscimento vocale", "feedback pronuncia", "countdown"]
+            "description": "Leggi il numero mostrato ad alta voce - avvio immediato senza countdown",
+            "features": ["riconoscimento vocale immediato", "feedback pronuncia", "start istantaneo"]
           },
           "compose": {
             "name": "COMPONI IL NUMERO",
@@ -471,7 +474,8 @@
           "webSpeechAPI": true,
           "speechSynthesis": true,
           "speechRecognition": "webkit prefixed",
-          "languageSupport": "it-IT"
+          "languageSupport": "it-IT",
+          "voiceActivation": "immediate_no_countdown"
         }
       }
     },
@@ -650,7 +654,10 @@
         "📱 Supporto offline completo con salvataggio progressi",
         "🎨 Design responsive ottimizzato per tutti i dispositivi",
         "🔧 Gestione permessi microfono automatica e user-friendly",
-        "✨ Sistema punteggi con stelle, badge e feedback coinvolgente"
+        "✨ Sistema punteggi con stelle, badge e feedback coinvolgente",
+        "🚀 OTTIMIZZAZIONE: Modalità 'Parla' senza countdown - avvio immediato",
+        "⚡ Registrazione vocale istantanea per esperienza più fluida",
+        "🎯 Rimosso popup e countdown per interazione diretta bambini"
       ],
       "v1.9.3": [
         "🔧 Service Worker v8.3.5 - Sistema Completamente Automatico per Bambini",
@@ -850,7 +857,7 @@
       },
       "numeri": {
         "version": "2.0.0",
-        "status": "FULLY_INTEGRATED_WITH_DEDICATED_SW_HANDLING",
+        "status": "FULLY_INTEGRATED_WITH_DEDICATED_SW_HANDLING_OPTIMIZED",
         "role": "NUMBER_LEARNING_GAME_COMPONENT",
         "fileName": "numeri.html",
         "cacheStrategy": "handleNumeriGameRequest",
@@ -874,7 +881,11 @@
           "backgroundSyncIntegrated": true,
           "customOfflineFallback": true,
           "audioContextSupport": true,
-          "touchOptimized": true
+          "touchOptimized": true,
+          "voiceModeOptimized": true,
+          "immediateVoiceActivation": true,
+          "noCountdownRequired": true,
+          "streamlinedUserExperience": true
         }
       },
       "serviceWorker": {
@@ -949,7 +960,10 @@
       "dragDropInteractionSupported": true,
       "multiModalLearningEnabled": true,
       "progressPersistenceActive": true,
-      "microphoneManagementAutomatic": true
+      "microphoneManagementAutomatic": true,
+      "immediateVoiceInteraction": true,
+      "streamlinedGameplay": true,
+      "optimizedForChildren": true
     },
     "conflicts": {
       "pwaConflicts": "RESOLVED",
@@ -969,8 +983,8 @@
   },
   "metadata": {
     "author": "Maestro Alberto Fogliata (Bs)",
-    "description": "Piattaforma di giochi educativi per studenti con sistema PWA completamente unificato v8.4.0. Include il nuovo gioco 'Impara i Numeri' con riconoscimento vocale, sistema completamente automatico per bambini a scuola con aggiornamenti trasparenti, profili personalizzati, sincronizzazione background e gestione offline dedicata. Ottimizzato per zero intervento utente.",
-    "keywords": ["educativo", "matematica", "numeri", "tabelline", "sfide giornaliere", "profili famiglia", "riconoscimento vocale", "drag drop", "PWA", "giochi", "studenti", "sistema automatico", "service worker v8.4.0", "cache avanzate", "background sync", "notifiche push", "offline dedicato", "iOS compatibile", "bambini scuola", "aggiornamenti trasparenti"],
+    "description": "Piattaforma di giochi educativi per studenti con sistema PWA completamente unificato v8.4.0. Include il nuovo gioco 'Impara i Numeri' con riconoscimento vocale ottimizzato, sistema completamente automatico per bambini a scuola con aggiornamenti trasparenti, profili personalizzati, sincronizzazione background e gestione offline dedicata. Ottimizzato per zero intervento utente con modalità vocale immediata.",
+    "keywords": ["educativo", "matematica", "numeri", "tabelline", "sfide giornaliere", "profili famiglia", "riconoscimento vocale immediato", "drag drop", "PWA", "giochi", "studenti", "sistema automatico", "service worker v8.4.0", "cache avanzate", "background sync", "notifiche push", "offline dedicato", "iOS compatibile", "bambini scuola", "aggiornamenti trasparenti", "modalità vocale ottimizzata"],
     "language": "it",
     "target_audience": "5-12 anni + famiglie + scuole",
     "educational_subjects": ["Matematica", "Numeri", "Calcolo mentale", "Operazioni aritmetiche", "Logica", "Problemi", "Geometria", "Riconoscimento numerico", "Lettura numerica"],
@@ -989,6 +1003,9 @@
       "📱 Supporto offline completo con persistenza dati",
       "🎨 Design responsive touch-optimized per tutti i dispositivi",
       "🔧 Gestione permessi microfono user-friendly e automatica",
+      "🚀 OTTIMIZZAZIONE v2.0.0: Modalità 'Parla' senza countdown",
+      "⚡ Registrazione vocale istantanea per esperienza fluida bambini",
+      "🎯 Rimosso popup e countdown - interazione diretta e immediata",
       "⚡ SkipWaiting Immediato + Reload Forzato Automatico",
       "🍎 Fix iOS Safari: Tutti i giochi compatibili iPhone/iPad",
       "🚨 Zero Intervento Utente Richiesto - Aggiornamenti Trasparenti",
@@ -1014,13 +1031,15 @@
       "Cache strategy differenziata per componente con supporto profili automatico",
       "Nessuna duplicazione PWA o conflitti - sistema completamente pulito",
       "Gestione automatica di tutti gli stati SW senza intervento utente",
-      "User experience ottimizzata specificamente per bambini e famiglie"
+      "User experience ottimizzata specificamente per bambini e famiglie",
+      "Modalità vocale immediate-start per apprendimento naturale",
+      "Sistema intuitivo senza attese o popup per bambini piccoli"
     ],
     "integration_status": {
       "matematica_integration": "COMPLETED",
       "tabelline_integration": "IMPROVED",
       "sfida_matematica_integration": "COMPLETED_WITH_DEDICATED_SW_HANDLING",
-      "numeri_integration": "COMPLETED_WITH_DEDICATED_SW_HANDLING",
+      "numeri_integration": "COMPLETED_WITH_DEDICATED_SW_HANDLING_AND_VOICE_OPTIMIZATION",
       "system_unification": "COMPLETED",
       "conflicts_resolution": "COMPLETED",
       "ui_optimization": "COMPLETED",
@@ -1040,7 +1059,10 @@
       "speech_recognition_integration": "COMPLETED",
       "speech_synthesis_integration": "COMPLETED",
       "drag_drop_integration": "COMPLETED",
-      "multi_modal_learning_integration": "COMPLETED"
+      "multi_modal_learning_integration": "COMPLETED",
+      "voice_mode_optimization": "COMPLETED_IMMEDIATE_START",
+      "countdown_removal_optimization": "COMPLETED",
+      "child_friendly_voice_interaction": "OPTIMIZED"
     }
   }
 }
